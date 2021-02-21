@@ -1,0 +1,12 @@
+Backend:
+- Postgres (Node-Postgres ORM)
+- Express
+
+Front-end:
+- React fetching from the Express API
+
+
+Features:
+- Collaborative editing
+  - Permission to view, edit, or delete
+  - Owner of task transitioning
