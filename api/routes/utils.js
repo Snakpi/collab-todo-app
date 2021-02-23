@@ -7,6 +7,8 @@ function codeAndJson(res, code, content = null) {
         ? "Resource not found"
         : code === 500
         ? "Internal server error"
+        : code === 409
+        ? "Resource conflict"
         : content;
   }
   return res.status(code).json({
@@ -15,4 +17,4 @@ function codeAndJson(res, code, content = null) {
   });
 }
 
-module.exports = {codeAndJson}
+module.exports = { codeAndJson };
