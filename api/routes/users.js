@@ -3,6 +3,11 @@ const db = require("../db/index");
 const { codeAndJson } = require("./utils");
 const router = express.Router();
 
+router.param("id", (req, res, next, id) => {
+  req.id = id;
+  next();
+});
+
 router.get("/", async (req, res) => {
   try {
     const allUsers = await db.query("SELECT * FROM users;");
@@ -16,7 +21,7 @@ router.get("/", async (req, res) => {
 router.get("/:id", async (req, res) => {
   try {
     const result = await db.query("SELECT * FROM users WHERE id = $1;", [
-      req.params.id,
+      req.id,
     ]);
     if (result.rowCount > 0) {
       codeAndJson(res, 200, result.rows[0]);
@@ -58,19 +63,18 @@ router.post("/", async (req, res) => {
 router.put("/:id", async (req, res) => {
   const { username, password, bio, age } = req.body;
   const bodyObject = { username, password, bio, age };
-  const { id } = req.params;
   try {
     for (let attr in bodyObject) {
       if (bodyObject[attr] != undefined) {
         const result = await db.query(
           `UPDATE users SET ${attr} = $1 WHERE id = $2;`,
-          [bodyObject[attr], id]
+          [bodyObject[attr], req.id]
         );
         console.log(result);
       }
     }
     const updatedUser = await db.query("SELECT * FROM users WHERE id = $1", [
-      id,
+      req.id,
     ]);
     if (updatedUser.rowCount > 0) {
       codeAndJson(res, 204);
@@ -84,10 +88,9 @@ router.put("/:id", async (req, res) => {
 });
 
 router.delete("/:id", async (req, res) => {
-  const { id } = req.params;
   try {
     const deletedUser = await db.query("DELETE FROM users WHERE id = $1;", [
-      id,
+      req.id,
     ]);
     console.log(deletedUser);
     if (deletedUser.rowCount > 0) {

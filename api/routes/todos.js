@@ -62,8 +62,9 @@ router.put("/:id", async (req, res) => {
   try {
     const result = await db.query(
       "UPDATE todos SET description = $1 WHERE id = $2 RETURNING *",
-      [description, id]
+      [description, req.id]
     );
+    console.log(result);
     if (result.rowCount > 0) {
       codeAndJson(res, 204);
     } else {
